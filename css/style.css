@@ -417,3 +417,33 @@ body:not(.keyboard-navigation) .app-dialog button:focus-visible { outline: none;
 /* 16. Divers ---------------------------------------------------------- */
 .logout-row { margin-top: 12px; }
 .res.heading { font-weight: 600; margin-top: 8px; }
+
+/* 17. Connexion : choix du signer et NIP-46 ----------------------------- */
+.help .login-modes { margin: 0 0 8px; padding-left: 22px; }
+.help .login-modes li + li { margin-top: 6px; }
+.help .login-modes li::marker { color: var(--violet-light); }
+.login-choices { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+@media (max-width: 480px) { .login-choices .btn-connect { flex: 1 1 100%; } }
+
+.nip46-dialog { width: min(520px, calc(100% - 32px)); overflow-y: auto; overscroll-behavior: contain; }
+.nip46-option { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--btn-border); }
+.nip46-option h3 { margin: 0 0 8px; color: #fff; font-size: 1rem; font-weight: 600; }
+.app-dialog p.nip46-help { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+.nip46-qr { width: min(240px, 100%); margin: 0 auto 12px; padding: 8px; border-radius: 8px; background: #fff; }
+.nip46-qr:empty { display: none; }
+.nip46-qr svg { display: block; width: 100%; height: auto; }
+.nip46-link-actions { flex-wrap: wrap; justify-content: center; }
+.nip46-open {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 14px;
+  border: 1px solid #7C3AED; border-radius: var(--r-lg); background: #7C3AED; color: #fff; text-decoration: none;
+}
+.nip46-open:focus-visible { outline: 2px solid #C4B5FD; outline-offset: 3px; }
+@media (hover: hover) { .nip46-open:hover { background: #6D28D9; border-color: #6D28D9; } }
+.nip46-open[aria-disabled="true"] { opacity: .5; pointer-events: none; }
+.nip46-bunker-row input { flex: 1 1 auto; }
+#nip46BunkerConnect { background: #7C3AED; border-color: #7C3AED; color: #fff; }
+@media (hover: hover) { #nip46BunkerConnect:not(:disabled):hover { background: #6D28D9; border-color: #6D28D9; } }
+@media (max-width: 480px) { .nip46-bunker-row { flex-wrap: wrap; } .nip46-bunker-row button { flex: 1 1 100%; } }
+.app-dialog p.nip46-status { margin: 16px 0 0; color: var(--cyan); font-size: .95rem; white-space: pre-line; }
+.app-dialog p.nip46-status:empty { display: none; }
+.app-dialog p.nip46-status.is-error { color: var(--bad-text); }
