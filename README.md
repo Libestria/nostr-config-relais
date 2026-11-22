@@ -1,4 +1,4 @@
-# Libestria – Configuration des relais Nostr
+# Libestria – Configurer ses relais Nostr
 
 Application web de [Libestria](https://libestria.fr) pour configurer ses relais Nostr et publier ses listes de relais, sans passer par un client Nostr.
 
