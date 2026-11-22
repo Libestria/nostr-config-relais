@@ -1,0 +1,419 @@
+/* Polices Libestria : chemins relatifs au dossier css/ (les polices sont dans fonts/). */
+@font-face { font-family: "Exo 2"; font-weight: 400; font-display: swap; src: local("Exo 2"), url(../fonts/exo-2-v26-latin-regular.woff2) format("woff2"); }
+@font-face { font-family: "Exo 2"; font-weight: 600; font-display: swap; src: local("Exo 2 SemiBold"), url(../fonts/exo-2-v26-latin-600.woff2) format("woff2"); }
+@font-face { font-family: "Exo 2"; font-weight: 700; font-display: swap; src: local("Exo 2 Bold"), url(../fonts/exo-2-v26-latin-700.woff2) format("woff2"); }
+@font-face { font-family: "Share Tech Mono"; font-weight: 400; font-display: swap; src: local("Share Tech Mono"), url(../fonts/share-tech-mono-v16-latin-regular.woff2) format("woff2"); }
+
+/* 1. Variables et typographies ---------------------------------------- */
+:root {
+  color-scheme: dark;
+  --violet-light: #a855f7; --cyan: #39c8ff;
+  --text: #f2f0f7; --text-2: #bdb9cf; --muted: #9693aa; --icon: #8e87a5;
+  --btn-bg: #15131e; --btn-border: #3c3453; --btn-hover-bg: #211b30; --btn-hover-border: #8b63d8;
+  --focus: #9b6bf2;
+  --ok: #22c55e; --okink: #04210f; --warn: #f59e0b; --bad: #ef4444; --bad-text: #fca5a5;
+  --stops: #302044 0%, #281d40 21%, #20264a 42%, #10121d 60%, #000 75%;
+  --divider: linear-gradient(90deg, var(--stops));
+  --grad-card: linear-gradient(160deg, var(--stops));
+  --grad-title: linear-gradient(105deg, #d9a4ff 0%, #b45cff 25%, #f26adf 52%, #8e7bff 75%, #39c8ff 100%);
+  --r-lg: 13px; --r-xl: 18px; --divider-width: 2px; --grad-side: linear-gradient(180deg, var(--stops));
+  --font-win-title: 600 clamp(1.4rem, 2.4vw, 1.65rem) / 1.4 var(--sans);
+  --sans: "Exo 2", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Share Tech Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+/* 2. Base et structure ------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+html { background: #000; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #000;
+  color: var(--text);
+  font-family: var(--sans);
+}
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.i {
+  display: block; flex: none; width: 20px; height: 20px;
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+main {
+  min-height: 0;
+  height: 100%;
+  width: 90%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: clamp(10px, 2vh, 24px) 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vh, 20px);
+  overflow: hidden;
+}
+
+/* 3. Fenêtre Libestria ------------------------------------------------ */
+/* Cadre de fenêtre Libestria : bordure latérale dégradée et titre fixe. */
+.window {
+  flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden;
+  border: solid transparent; border-width: 0 0 0 4px;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  background: linear-gradient(#000, #000) padding-box, var(--grad-side) border-box;
+}
+.win-bar {
+  flex: none; display: flex; align-items: center; gap: 10px;
+  min-height: 55px; padding: 12px 20px;
+  border-bottom: var(--divider-width) solid transparent;
+  background: var(--divider);
+}
+.win-icon { display: inline-flex; flex: none; color: var(--cyan); }
+.win-icon .i { width: 25px; height: 25px; }
+.win-title { margin: 0; font: var(--font-win-title); color: #fff; }
+/* Alignement optique de l’icône et du titre : mêmes règles que Libestria. */
+@supports (top: 1cap) {
+  .win-bar { align-items: baseline; }
+  .win-icon { font: var(--font-win-title); --s: 25px; }
+  .win-icon {
+    position: relative;
+    top: calc(var(--s) / 2 - .5cap - .3px);
+    margin-top: calc(-1 * var(--s));
+  }
+}
+.proto-logos { display: flex; align-items: center; justify-content: center; gap: clamp(20px, 7vw, 64px); width: 100%; }
+.proto-logos img { display: block; width: auto; height: clamp(38px, 8vw, 54px); max-width: 42%; object-fit: contain; }
+/* Zone défilante sous le bandeau de fenêtre */
+.page { flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #7854b4 #10101a; }
+.content { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 720px; margin: 0 auto; padding: 34px clamp(22px, 3vw, 48px); }
+
+/* 4. Textes, cartes et messages --------------------------------------- */
+h2, .section-title { font-size: 1.15rem; font-weight: 600; color: #fff; margin: 0 0 10px; letter-spacing: .03em; }
+.sub { margin: 0 0 1rem; color: var(--text-2); letter-spacing: .02em; }
+.sub > * + * { margin-top: 1rem; }
+.sub ul { margin: 1rem 0 0; padding-left: 22px; }
+.sub li + li { margin-top: 1rem; }
+.sub li::marker { color: var(--violet-light); }
+.sub li strong { color: var(--cyan); }
+.card {
+  background: var(--grad-card); border-radius: var(--r-lg); padding: 20px 18px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%);
+}
+.row { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.hint { margin: 0 0 12px; color: var(--muted); font-size: .95rem; }
+#listHint, #messageText, #publishConfirmText, .app-dialog .res { white-space: pre-line; } /* respecte les retours à la ligne (\n) des indications */
+#relayAddCard .add-help { margin: 0 0 16px; color: var(--muted); font-size: .95rem; line-height: 1.5; }
+.empty { color: var(--bad-text); padding: 8px 0; margin: 0; }
+
+/* Apparition des cartes : même fondu et glissement que sur Libestria. */
+@media (prefers-reduced-motion: no-preference) {
+  .card.reveal-ready, .relay.reveal-ready {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity .85s cubic-bezier(.22, 1, .36, 1),
+                transform .85s cubic-bezier(.22, 1, .36, 1);
+  }
+  .card.reveal-ready.is-entering, .relay.reveal-ready.is-entering {
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .card.reveal-ready.is-visible, .relay.reveal-ready.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 5. Connexion ------------------------------------------------------- */
+.login-title { display: flex; align-items: center; gap: 10px; }
+/* i-radio est dessinée sur une grille de 24 (i-account : 64) : trait réduit pour un rendu équivalent */
+#relaySummaryTitle .login-icon { stroke-width: 1.92; }
+.login-icon { width: 25px; height: 25px; flex: none; color: var(--cyan); fill: none; stroke: currentColor; stroke-width: 5.1; stroke-linecap: round; stroke-linejoin: round; }
+.help { margin-top: 14px; font-size: .9rem; color: var(--muted); }
+.help p { margin: 0 0 8px; }
+.help a { color: var(--cyan); text-decoration: none; }
+.help a:hover, .help a:focus-visible { text-decoration: underline; }
+.help strong { color: var(--text-2); }
+
+/* Bouton de connexion : présentation des boutons Copier de Libestria. */
+#login .help + .btn-connect { margin-top: 16px; }
+button.btn-connect {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  max-width: 100%; min-width: 144px; min-height: 44px; padding: 9px 14px;
+  background: var(--btn-bg); border-color: var(--btn-border); color: var(--icon);
+  font-size: 1rem; font-weight: 400; letter-spacing: normal; line-height: 1.4; white-space: nowrap;
+}
+button.btn-connect .i { width: 20px; height: 20px; flex: none; stroke: currentColor; fill: none; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+@supports (top: 1cap) {
+  button.btn-connect { align-items: baseline; padding-block: calc((44px - 2px - 1.4em) / 2); }
+  button.btn-connect .i { --s: 20px; position: relative; top: calc(var(--s) / 2 - .5cap - .3px); margin-top: calc(-1 * var(--s)); }
+}
+
+/* Indicateur de chargement (popups) : sans dépendance externe. */
+.loading-spinner { width: 48px; height: 48px; border: 4px solid rgb(168 85 247 / 20%); border-top-color: var(--violet-light); border-radius: 50%; animation: loading-spin .9s linear infinite; }
+@keyframes loading-spin { to { transform: rotate(360deg); } }
+
+/* 6. En-tête ---------------------------------------------------------- */
+.banner { flex: none; display: flex; align-items: center; gap: clamp(9px, 1.8vw, 22px); padding: 3px 0; }
+.banner > a.banner { flex: 0 1 auto; min-width: 0; padding: 0; text-decoration: none; }
+.brand-logo { display: block; flex: none; width: 115px; height: auto; }
+.wordmark {
+  flex: 0 1 auto; min-width: 0;
+  font: 400 clamp(2rem, 4.3vw, 4.1rem) / 1.12 var(--mono);
+  white-space: nowrap;
+  color: transparent;
+  background: var(--grad-title);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.actions { display: flex; align-items: center; gap: 10px; margin-left: auto; flex: none; }
+.icon-btn {
+  display: grid; place-items: center; flex: none; padding: 0;
+  border: 1px solid var(--btn-border); border-radius: 50%; color: #fff;
+  transition: background .2s, border-color .2s;
+  width: 48px; height: 48px; background: var(--grad-card); text-decoration: none; line-height: 1;
+}
+.icon-btn .i { width: 30px; height: 30px; }
+.icon-btn[href$="#accueil"] .i { color: var(--icon); }
+.icon-btn[href$="#soutien"] .i { color: var(--cyan); }
+.icon-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; background: var(--btn-hover-bg); border-color: var(--btn-hover-border); color: #fff; }
+@media (hover: hover) { .icon-btn:hover { background: var(--btn-hover-bg); border-color: var(--btn-hover-border); color: #fff; } }
+.icon-btn:active { background: var(--btn-hover-bg); }
+/* Menu informatif : même bouton que sur Libestria, sans action. */
+.actions .icon-btn.menu-unavailable {
+  position: relative; opacity: .58; cursor: not-allowed;
+}
+.actions .icon-btn.menu-unavailable:is(:hover, :focus-visible, :active) {
+  background: var(--grad-card); border-color: var(--btn-border); color: #fff;
+}
+.actions .icon-btn.menu-unavailable::after {
+  content: attr(data-tooltip); position: absolute; top: calc(100% + 10px); right: 0;
+  width: max-content; max-width: min(260px, calc(100vw - 24px));
+  padding: 9px 12px; border: 1px solid var(--btn-border); border-radius: 8px;
+  background: var(--btn-hover-bg); color: #fff; font: 400 13px/1.4 system-ui, sans-serif;
+  text-align: center; white-space: normal; box-shadow: 0 6px 18px rgb(0 0 0 / 25%);
+  opacity: 0; visibility: hidden; pointer-events: none; z-index: 5;
+}
+.actions .icon-btn.menu-unavailable:is(:hover, :focus-visible)::after {
+  opacity: 1; visibility: visible;
+}
+
+
+@keyframes support-heartbeat {
+  0%, 8%, 18%, 28%, 100% { transform: scale(1); }
+  12%, 22% { transform: scale(1.15); }
+}
+/* Battement discret du bouton Soutenir */
+@media (prefers-reduced-motion: no-preference) {
+  .actions .icon-btn[href$="#soutien"] .i { animation: support-heartbeat 5s ease-in-out infinite; transform-origin: center; }
+}
+
+@media (max-width: 699px) {
+  main { width: 96%; padding: 8px 0; gap: 9px; }
+  .win-bar { min-height: 40px; padding: 8px 10px; }
+  .content { padding: 18px 12px; }
+  .banner { gap: 8px; }
+  .brand-logo { width: 75px; }
+  .wordmark { font-size: clamp(1.35rem, 5.3vw, 2.2rem); letter-spacing: -.035em; }
+}
+@media (max-width: 600px) {
+  .icon-btn { width: 43px; height: 43px; }
+  .icon-btn .i { width: 27px; height: 27px; }
+}
+@media (max-width: 380px) { .wordmark { font-size: clamp(1.15rem, 5vw, 1.4rem); } }
+@media (max-width: 340px) { .wordmark { white-space: normal; overflow-wrap: anywhere; } }
+@media (max-height: 620px) { main { gap: 6px; padding: 5px 0; } }
+
+/* 7. Pied de page ----------------------------------------------------- */
+.site-footer {
+  width: 90%; max-width: 1600px; margin: 0 auto; padding: 8px 0 max(12px, env(safe-area-inset-bottom));
+  min-height: 34px;
+  color: var(--text-2); font: 400 clamp(.7rem, 1.9vw, .8rem) var(--mono); text-align: center; text-wrap: balance;
+}
+
+/* 8. Formulaires et boutons ------------------------------------------- */
+button {
+  font: inherit; color: var(--icon); cursor: pointer; min-height: 40px; padding: 8px 14px;
+  border: 1px solid var(--btn-border); border-radius: var(--r-lg); background: var(--btn-bg);
+  transition: background .2s, border-color .2s, color .2s; -webkit-tap-highlight-color: transparent;
+}
+button:disabled { opacity: .5; cursor: default; }
+button:focus:not(:focus-visible), .icon-btn:focus:not(:focus-visible) { outline: none; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+@media (hover: hover) { button:not(:disabled):hover { background: var(--btn-hover-bg); border-color: var(--btn-hover-border); color: #fff; } }
+input {
+  font: inherit; width: 100%; min-width: 0; padding: 9px 12px; color: var(--text);
+  border: 1px solid var(--btn-border); border-radius: var(--r-lg); background: var(--btn-bg);
+}
+input:focus { border-color: var(--btn-hover-border); }
+input::placeholder { color: var(--muted); }
+
+/* 9. Compte Nostr ----------------------------------------------------- */
+.profile { display: flex; align-items: center; gap: 14px; margin: 14px 0 0; }
+.profile > div:last-child { min-width: 0; }
+.avatar {
+  width: 52px; height: 52px; border-radius: 50%; flex: none; overflow: hidden; border: 1px solid var(--btn-border);
+  background: var(--btn-bg); color: var(--cyan); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.3rem;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.profile-name { font-weight: 600; font-size: 1.1rem; color: #fff; line-height: 1.3; overflow-wrap: anywhere; }
+.profile-nip05 { margin: 3px 0; font-size: .9rem; color: var(--muted); overflow-wrap: anywhere; }
+.profile-nip05.is-verified { color: #49c878; }
+.profile-nip05 .verified-mark { font-weight: 700; margin-left: 5px; }
+.profile-key { font: .85rem var(--mono); color: var(--cyan); letter-spacing: .025em; word-break: break-all; }
+
+/* Avertissement : liste existante introuvable. */
+.list-warning { margin: 14px 0 0; padding: 10px 12px; border-left: 3px solid var(--warn); border-radius: 0 var(--r-lg) var(--r-lg) 0; background: rgb(245 158 11 / 10%); color: #fcd34d; font-size: .9rem; line-height: 1.5; white-space: pre-line; }
+.list-warning[hidden] { display: none; }
+#relayListCard .list-warning { margin: 0 0 12px; }
+
+/* Résumé des relais et erreur de chargement. */
+#relaySummary { margin-top: 16px; }
+.relay-summary { color: var(--muted); font-size: .95rem; line-height: 1.6; }
+.relay-summary p { margin: 0 0 10px; }
+.relay-summary p:last-child { margin-bottom: 0; }
+.relay-summary strong { color: var(--cyan); }
+
+/* 10. Accordéons : mêmes principes et chevrons que « Ressources Nostr ». */
+.relay-accordions { display: grid; }
+.relay-accordions[hidden] { display: none; }
+.relay-accordion { min-width: 0; border: 0 solid; border-top-width: var(--divider-width); border-image: var(--divider) 1; padding: 24px 0; }
+.relay-accordion-heading { margin: 0; color: #fff; font-size: 18px; font-weight: 600; line-height: 1.4; }
+.relay-accordion-heading .i { flex: none; width: 24px; height: 24px; margin-top: calc((1.4em - 24px) / 2 + 1px); color: var(--cyan); }
+.theme-toggle { display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 0; min-height: 0; border: 0; border-radius: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.theme-toggle strong { flex: 1; font-weight: inherit; }
+.theme-toggle::after { content: ""; flex: none; width: 9px; height: 9px; margin: 7px 5px 0 0; border-right: 2px solid var(--cyan); border-bottom: 2px solid var(--cyan); transform: rotate(45deg); transition: transform .2s ease; }
+.theme-toggle[aria-expanded="true"]::after { transform: rotate(225deg); }
+.theme-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 5px; }
+.relay-accordion-content { margin-top: 14px; display: flex; flex-direction: column; gap: 16px; }
+.relay-accordion-content[hidden] { display: none; }
+/* Titres secondaires des cartes d'un accordéon : plus petits que le titre de l'accordéon (18 px) pour marquer la hiérarchie. */
+.relay-accordion-content .section-title { font-size: 1rem; }
+#relayListCard { min-width: 0; }
+@media (hover: hover) { .theme-toggle:not(:disabled):hover { background: none; border-color: transparent; color: #fff; } }
+@supports (top: 1cap) {
+  .relay-accordion-heading .theme-toggle { align-items: baseline; }
+  .relay-accordion-heading .i { position: relative; top: calc(12px - .5cap - .3px); margin-top: 0; }
+}
+
+/* 11. Relais et indicateurs ------------------------------------------- */
+.relay { --relay-gap: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: var(--relay-gap); padding: 14px; background: var(--grad-card); border-radius: var(--r-lg); box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%); }
+#list { display: grid; gap: 12px; }
+/* Le conteneur .dot reprend la police de .url : sa ligne a la même hauteur et la même ligne de base que l'adresse.
+   La pastille (::before) est alignée par vertical-align: middle, c'est-à-dire sur le milieu de la hauteur
+   d'x de la police : le centrage reste correct quelle que soit la police réellement chargée. */
+.dot { width: 7px; flex: none; font: .92rem var(--mono); }
+.dot::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); vertical-align: middle; }
+.dot.ok::before { background: var(--ok); box-shadow: 0 0 5px rgb(34 197 94 / 65%), 0 0 11px rgb(34 197 94 / 30%); }
+.dot.bad::before { background: var(--bad); box-shadow: 0 0 5px rgb(239 68 68 / 60%), 0 0 11px rgb(239 68 68 / 27%); }
+.url { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: .92rem var(--mono); letter-spacing: .025em; color: var(--cyan); }
+.relay-connection { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.lat { display: inline-flex; align-items: baseline; gap: 5px; font: .8rem var(--mono); color: var(--muted); flex: none; white-space: nowrap; }
+/* Le bas du SVG coïncide avec la ligne de base du libellé et de la mesure. */
+.lat svg { width: 16px; height: 12px; flex: none; }
+.lat.g svg { color: var(--ok); }
+.lat.o svg { color: var(--warn); }
+.lat.r svg { color: var(--bad); }
+.relay-address { display: flex; align-items: center; gap: 8px; flex: 1 1 100%; min-width: 0; }
+.relay-address .url { flex: 0 1 auto; }
+/* Diode, adresse et bouton de suppression centrés dans la même ligne flex ; l'alignement fin de la diode est géré par .dot. */
+.del { display: grid; place-items: center; flex: none; width: 28px; height: 28px; min-height: 28px; padding: 0; border-radius: 50%; background: var(--btn-bg); color: var(--bad); border-color: var(--btn-border); }
+.refresh-relays { width: 28px; height: 28px; min-height: 28px; background: var(--grad-card); color: var(--cyan); }
+.refresh-relays svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.refresh-relays.is-measuring svg { display: none; }
+.refresh-relays.is-measuring::after { content: ""; box-sizing: border-box; width: 15px; height: 15px; border: 2px solid rgb(57 200 255 / 25%); border-top-color: currentColor; border-radius: 50%; animation: loading-spin .75s linear infinite; }
+.del svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+@media (hover: hover) { .del:not(:disabled):hover { color: #fff; background: #3a1a1f; border-color: var(--bad); } }
+.modes { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.relay-controls { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; flex: 1 0 100%; padding-left: 18px; }
+.modes button { min-height: 34px; font-size: .85rem; padding: 4px 10px; display: inline-flex; align-items: center; justify-content: center; text-align: center; white-space: nowrap; }
+.modes button.on { background: #14532d; color: #86efac; border-color: var(--ok); font-weight: 700; }
+
+/* Indicateurs NIP : déclarations et présence d'événements distinctes. */
+.relay-nips { flex: 1 1 100%; min-width: 0; display: grid; gap: 7px; padding-left: 18px; }
+/* Sous les boutons R, W et R+W, les NIP sont séparés par 14 px (= le padding de la carte), quel que soit l'espacement courant de .relay. */
+.relay-controls + .relay-nips { margin-top: calc(14px - var(--relay-gap)); }
+.nip-line, .nip-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+.nip-pill { font: .76rem var(--mono); border: 1px solid #5c6470; background: #374151; color: #d1d5db; padding: 2px 6px; border-radius: 5px; min-height: 0; line-height: 1.4; position: relative; cursor: pointer; }
+.nip-pill::after { content: ""; position: absolute; inset: -6px -3px; }
+.nip-pill.announced { border-color: #3b82f6; background: #1e3a5f; color: #93c5fd; }
+.nip-pill.observed { border-color: #32664a; background: #14532d; color: #86efac; }
+.nip-legend { gap: 12px; font-size: .72rem; color: var(--text-2); }
+.nip-legend-item { display: inline-flex; align-items: center; gap: 5px; }
+.nip-legend-hint { flex-basis: 100%; }
+.nip-legend-dot { width: 5px; height: 5px; border-radius: 50%; background: #9ca3af; flex: none; }
+.nip-legend-dot.announced { background: #3b82f6; }
+.nip-legend-dot.observed { background: #22c55e; }
+@media (max-width: 600px) { .relay-nips { padding-left: 0; } }
+
+/* 12. Suggestions de relais ------------------------------------------- */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.chips .lbl { flex: 1 0 100%; font-size: .9rem; font-weight: 600; color: #fff; margin-top: 8px; }
+.chips .lbl:first-child { margin-top: 0; }
+.chips button { min-height: 32px; font: .82rem var(--mono); padding: 3px 10px; border-radius: 99px; color: var(--cyan); }
+@media (hover: hover) { .chips button:not(:disabled):hover { color: var(--cyan); } }
+
+/* 13. Responsive de l’application ------------------------------------
+   Les seuils et dimensions de l’en-tête restent ceux de Libestria. */
+@media (max-width: 699px) {
+  .site-footer { width: 96%; padding: 5px 0 max(8px, env(safe-area-inset-bottom)); }
+  .card { padding: 18px 12px; }
+
+  .profile { gap: 10px; }
+  .relay { --relay-gap: 8px; }
+  .relay-controls { padding-left: 16px; }
+}
+@media (max-width: 600px) {
+  .add-row { flex-wrap: wrap; }
+  #newUrl { flex: 1 1 100%; }
+  #btnAdd { width: 100%; min-height: 48px; }
+  .relay-connection { margin-left: 16px; }
+  .relay-controls { padding-left: 0; }
+}
+@media (max-width: 380px) {
+  .card { padding: 16px 10px; }
+  .relay .url, .relay .dot { font-size: .85rem; }
+  .modes button { padding-inline: 8px; }
+}
+
+/* 14. Popups : confirmation, avancement, alertes et résultats ---------- */
+.publish-actions { display: flex; flex-direction: column; align-items: stretch; }
+.publish-actions > button { min-height: 48px; }
+/* Action de publication uniquement : couleur dédiée, sans affecter les autres boutons. */
+/* Fixé en bas du panneau uniquement s'il y a des modifications à publier ; il disparaît avec l'accordéon. */
+.relay-accordion-content.has-changes .publish-actions { position: sticky; bottom: 0; z-index: 5; padding: 10px 0; background: #000; border-top: 1px solid var(--btn-border); }
+#btnAdd { min-height: 48px; }
+button[data-publish-category], #btnAdd { background: #7C3AED; border-color: #7C3AED; color: #fff; }
+@media (hover: hover) { button[data-publish-category]:not(:disabled):hover, #btnAdd:not(:disabled):hover { background: #6D28D9; border-color: #6D28D9; color: #fff; } }
+button[data-publish-category]:focus-visible, #btnAdd:focus-visible { outline: 2px solid #C4B5FD; outline-offset: 3px; }
+.app-dialog { position: fixed; inset: 0; margin: auto; width: min(440px, calc(100% - 32px)); max-height: calc(100% - 32px); padding: 24px; color: var(--text-2); background: #171320; border: 1px solid var(--btn-border); border-radius: var(--r-lg); box-shadow: 0 16px 50px #000b; }
+.app-dialog.nonmodal { inset: auto 0 16px; margin: 0 auto; z-index: 50; box-shadow: 0 8px 30px #000a; }
+.app-dialog:focus { outline: none; } /* Le focus automatique ne modifie pas la bordure du dialogue ; les commandes gardent leur focus clavier via :focus-visible. */
+/* Safari peut appliquer :focus-visible au focus programmatique des boutons des dialogues. */
+body:not(.keyboard-navigation) .app-dialog button:focus-visible { outline: none; }
+.app-dialog::backdrop { background: rgb(0 0 0 / 72%); }
+.app-dialog p { margin: 0 0 14px; line-height: 1.5; }
+.app-dialog[data-tone="busy"] p { margin-bottom: 0; }
+.dialog-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.dialog-head h2 { margin: 0; }
+.dialog-icon { flex: none; display: grid; place-items: center; min-width: 26px; height: 26px; font-size: 1.3rem; line-height: 1; }
+.dialog-icon[data-tone="success"] { color: var(--ok); font-size: 1.6rem; }
+.dialog-icon .loading-spinner { width: 24px; height: 24px; border-width: 3px; }
+.dialog-details { max-height: min(40vh, 260px); overflow-y: auto; margin: 0 0 14px; padding-top: 10px; border-top: 1px solid var(--btn-border); }
+.dialog-details[hidden], .dialog-actions:empty { display: none; }
+.dialog-actions { justify-content: flex-end; margin-top: 18px; }
+.res { font: .88rem var(--mono); margin: 4px 0; color: var(--text-2); overflow-wrap: anywhere; }
+.res.ok::before { content: "✓ "; color: var(--ok); }
+.res.bad::before { content: "✕ "; color: var(--bad); }
+
+/* 15. Mouvement réduit ------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  .loading-spinner { animation: none; border-top-color: var(--cyan); }
+  .refresh-relays.is-measuring::after { animation: none; border-color: currentColor; border-right-color: transparent; }
+}
+
+/* 16. Divers ---------------------------------------------------------- */
+.logout-row { margin-top: 12px; }
+.res.heading { font-weight: 600; margin-top: 8px; }
