@@ -53,12 +53,44 @@
   <div class="card" id="login">
     <h3 class="login-title section-title"><svg class="login-icon" aria-hidden="true" focusable="false"><use href="#i-account"/></svg><span>Connecte ton compte Nostr</span></h3>
     <div class="help">
-      <p>• Nécessite un signer (signataire) de type « extension de navigateur » compatible NIP-07 (Alby Extension, Nostr Map Signer, Nostash…).</p>
-      <p>• Ta clé privée (nsec) reste gérée par ton extension. L’application n’y accède jamais et délègue les signatures au signer.</p>
-      <p>• Tu pourras trouver et installer un signer compatible NIP-07 en consultant la rubrique <a href="https://libestria.fr/#ressources-nostr" target="_blank" rel="noopener noreferrer">Ressources Nostr &gt; Signers (signataires) Nostr</a> de Libestria.</p>
+      <p>• Nécessite un signer (signataire) :</p>
+      <ul class="login-modes">
+        <li><strong>Extension de navigateur</strong> compatible NIP-07 (Alby Extension, Nostr Map Signer, Nostash…) ;</li>
+        <li><strong>Signer distant</strong> compatible NIP-46, sur ton téléphone ou en ligne (Amber, nsec.app, Primal…).</li>
+      </ul>
+      <p>• Ta clé privée (nsec) reste gérée par ton signer. L’application n’y accède jamais et délègue les signatures au signer.</p>
+      <p>• Tu pourras trouver et installer un signer compatible en consultant la rubrique <a href="https://libestria.fr/#ressources-nostr" target="_blank" rel="noopener noreferrer">Ressources Nostr &gt; Signers (signataires) Nostr</a> de Libestria.</p>
     </div>
-    <button class="btn-connect" id="btnLogin" type="button"><svg class="i" aria-hidden="true" focusable="false"><use href="#i-account"/></svg><span>Connecter</span></button>
+    <div class="login-choices">
+      <button class="btn-connect" id="btnLogin" type="button"><svg class="i" aria-hidden="true" focusable="false"><use href="#i-account"/></svg><span>Extension (NIP-07)</span></button>
+      <button class="btn-connect" id="btnLoginNip46" type="button"><svg class="i" aria-hidden="true" focusable="false"><use href="#i-account"/></svg><span>Signer distant (NIP-46)</span></button>
+    </div>
   </div>
+
+  <dialog id="nip46Dialog" class="app-dialog nip46-dialog" aria-labelledby="nip46Title">
+    <h2 id="nip46Title">Connexion avec un signer distant (NIP-46)</h2>
+    <section class="nip46-option" aria-labelledby="nip46LinkTitle">
+      <h3 id="nip46LinkTitle">Option 1 : scanner le QR code ou ouvrir le lien</h3>
+      <p class="nip46-help">Sur ordinateur, scanne ce QR code avec ton signer. Sur téléphone, ouvre directement le lien dans ton signer.</p>
+      <div class="nip46-qr" id="nip46Qr"></div>
+      <div class="row nip46-link-actions">
+        <a class="nip46-open" id="nip46Open" href="#">Ouvrir dans mon signer</a>
+        <button type="button" id="nip46Copy">Copier le lien</button>
+      </div>
+    </section>
+    <section class="nip46-option" aria-labelledby="nip46BunkerTitle">
+      <h3 id="nip46BunkerTitle">Option 2 : coller une adresse bunker://</h3>
+      <p class="nip46-help">Copie l’adresse de connexion fournie par ton signer, puis colle-la ici.</p>
+      <div class="row nip46-bunker-row">
+        <input id="nip46Bunker" aria-label="Adresse bunker" placeholder="bunker://…" autocapitalize="off" autocomplete="off" spellcheck="false">
+        <button type="button" class="main" id="nip46BunkerConnect">Connecter</button>
+      </div>
+    </section>
+    <p class="nip46-status" id="nip46Status" role="status" aria-live="polite"></p>
+    <div class="row dialog-actions">
+      <button type="button" id="nip46Cancel">Annuler</button>
+    </div>
+  </dialog>
 
 
   <dialog id="messageDialog" class="app-dialog" aria-labelledby="messageTitle" aria-describedby="messageText">
