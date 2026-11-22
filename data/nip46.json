@@ -1,0 +1,15 @@
+{
+  "relays": [
+    "wss://relay.nsec.app",
+    "wss://relay.damus.io",
+    "wss://nos.lol"
+  ],
+  "perms": [
+    "sign_event:10002",
+    "sign_event:10007",
+    "sign_event:10050"
+  ],
+  "name": "Libestria – Relais Nostr",
+  "url": "https://libestria.fr/nostr-config-relais/",
+  "image": "https://libestria.fr/favicon.png"
+}
