@@ -1,6 +1,7 @@
 {
   "relays": [
     "wss://relay.nsec.app",
+    "wss://relay.primal.net",
     "wss://relay.damus.io",
     "wss://nos.lol"
   ],
@@ -9,7 +10,7 @@
     "sign_event:10007",
     "sign_event:10050"
   ],
-  "name": "Libestria – Relais Nostr",
+  "name": "Libestria – nostr-config-relais",
   "url": "https://libestria.fr/nostr-config-relais/",
   "image": "https://libestria.fr/favicon.png"
 }
