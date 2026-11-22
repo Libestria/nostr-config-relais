@@ -1,0 +1,33 @@
+{
+  "pub": [
+    {
+      "id": "popular",
+      "relays": ["wss://relay.primal.net", "wss://nos.lol", "wss://relay.damus.io", "wss://relay.ditto.pub", "wss://purplepag.es", "wss://nostr.mom", "wss://relay.snort.social", "wss://relay.nostr.net", "wss://nostr.bitcoiner.social", "wss://offchain.pub", "wss://nostr-01.yakihonne.com", "wss://nostr-02.yakihonne.com", "wss://relay.nos.social", "wss://relay.nostrmap.net", "wss://relay.decentralia.fr", "wss://relay.noeudlibre.fr"]
+    },
+    {
+      "id": "french",
+      "relays": ["wss://relay.nostrmap.net", "wss://relay.decentralia.fr", "wss://relay.noeudlibre.fr"]
+    },
+    {
+      "id": "longform",
+      "relays": ["wss://relay.primal.net", "wss://nos.lol", "wss://relay.damus.io", "wss://nostr-01.yakihonne.com", "wss://nostr-02.yakihonne.com", "wss://relay.decentnewsroom.com", "wss://relay.decentralia.fr"]
+    },
+    {
+      "id": "paid",
+      "defaultMode": "r",
+      "relays": ["wss://nostr.wine"]
+    }
+  ],
+  "search": [
+    {
+      "id": "search",
+      "relays": ["wss://search.nos.today", "wss://relay.noswhere.com", "wss://nostr.wine", "wss://relay.ditto.pub", "wss://profiles.nostrver.se"]
+    }
+  ],
+  "dm": [
+    {
+      "id": "dm",
+      "relays": ["wss://auth.nostr1.com", "wss://nip17.com", "wss://relay.decentralia.fr", "wss://nos.lol", "wss://relay.primal.net", "wss://relay.damus.io"]
+    }
+  ]
+}
