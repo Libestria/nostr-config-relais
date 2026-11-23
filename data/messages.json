@@ -215,7 +215,7 @@
   },
   "nip46": {
     "preparingTitle": "Préparation de la connexion NIP-46…",
-    "preparingText": "Chargement des outils de connexion et ouverture des relais de communication.",
+    "preparingText": "Chargement des outils de connexion NIP-46.",
     "libsMissingTitle": "Connexion NIP-46 indisponible",
     "libsMissingText": "Les fichiers nécessaires à la connexion NIP-46 n’ont pas pu être chargés.\nRecharge la page, puis réessaie.",
     "relaysUnreachableTitle": "Relais de communication injoignables",
@@ -231,8 +231,6 @@
       "refused": "Connexion refusée par ton signer.",
       "failed": "Connexion impossible : {reason}",
       "relaysUnreachable": "Impossible de joindre les relais indiqués dans cette adresse bunker.",
-      "copied": "Lien copié.",
-      "copyFailed": "Copie impossible : sélectionne le lien et copie-le manuellement.",
       "signerMessage": "Message renvoyé par ton signer :\n« {message} »"
     },
     "authTitle": "Validation demandée par ton signer",
