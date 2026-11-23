@@ -27,6 +27,14 @@ export async function withTimeout(action, ms, cancelled) {
   }
 }
 
+// Marque une erreur comme venant du signer lui-même (message à afficher tel quel à l'utilisateur).
+export function signerError(error) {
+  const marked = error instanceof Error ? error : new Error(String(error?.message ?? error ?? ""));
+  if (error && typeof error === "object" && "code" in error && !("code" in marked)) marked.code = error.code;
+  marked.fromSigner = true;
+  return marked;
+}
+
 // Refus explicite de l'utilisateur dans son signer.
 export function isRefusal(error) {
   return error?.code === 4001 || error?.code === "4001" || error?.name === "NotAllowedError" ||

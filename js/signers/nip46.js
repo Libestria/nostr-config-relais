@@ -10,7 +10,7 @@
    Bibliothèques (chargées seulement quand NIP-46 est choisi) :
    vendor/nostr-tools/nostr.bundle.js (window.NostrTools) et vendor/qrcode-generator/qrcode.js (window.qrcode). */
 
-import { withTimeout } from "./common.js";
+import { withTimeout, signerError } from "./common.js";
 
 const LIBRARIES = ["vendor/nostr-tools/nostr.bundle.js", "vendor/qrcode-generator/qrcode.js"];
 const KIND = 24133;
@@ -150,7 +150,7 @@ class Nip46Session {
       return;
     }
     this.pending.delete(response.id);
-    if (response.error) request.reject(new Error(String(response.error)));
+    if (response.error) request.reject(signerError(new Error(String(response.error))));
     else request.resolve(response.result);
   }
 
