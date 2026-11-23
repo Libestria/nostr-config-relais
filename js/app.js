@@ -27,7 +27,7 @@ try {
 } catch (error) {
   // Texte écrit ici : messages.json peut justement être celui qui manque.
   console.error("Données de l’application introuvables", error);
-  document.querySelectorAll("#btnLogin, #btnLoginNip46").forEach(button => { button.disabled = true; });
+  document.querySelectorAll(".login-choices .btn-connect").forEach(button => { button.disabled = true; });
   const help = document.querySelector("#login .help");
   if (help) help.insertAdjacentHTML("afterbegin", '<p class="empty">⚠️ Impossible de charger les données de l’application. Recharge la page.</p>');
   throw error;
@@ -1037,12 +1037,16 @@ async function finishLogin(candidate, key) {
   return false;
 }
 
-/* 9 bis. Connexion NIP-46 ---------------------------------------------- */
-const nip46Dialog = $("nip46Dialog");
-let nip46Attempt = null; // tentative en cours : { cancelled, resolve(signer), cancel() }
+/* 9 bis. Connexion NIP-46 : Bunker et Nostr Connect --------------------- */
+const bunkerDialog = $("bunkerDialog");
+const nostrConnectDialog = $("nostrConnectDialog");
+let nip46Busy = false;          // une seule connexion NIP-46 à la fois
+let bunkerAttempt = null;       // tentative Bunker en cours
+let nostrConnectAttempt = null; // tentative Nostr Connect en cours
+let copyResetTimer;
 
-function setNip46Status(text, isError = false) {
-  const status = $("nip46Status");
+function setStatus(id, text, isError = false) {
+  const status = $(id);
   status.textContent = text;
   status.classList.toggle("is-error", isError);
 }
@@ -1069,19 +1073,105 @@ async function askAuthUrl(url) {
   if (choice === "open") window.open(url, "_blank", "noopener,noreferrer");
 }
 
-async function loginWithNip46() {
-  const button = $("btnLoginNip46");
-  if (button.disabled || nip46Attempt) return;
+// Tentative annulable : « cancelled » interrompt les demandes au signer, « chosen » donne le signer connecté.
+function createAttempt() {
+  let rejectCancelled, resolveChosen, rejectChosen;
+  const cancelled = new Promise((_, reject) => { rejectCancelled = reject; });
+  const chosen = new Promise((resolve, reject) => { resolveChosen = resolve; rejectChosen = reject; });
+  cancelled.catch(() => {});
+  chosen.catch(() => {});
+  const attempt = {
+    cancelled, chosen, done: false,
+    resolve(candidate) {
+      if (attempt.done) { candidate.close(); return; }
+      attempt.done = true;
+      resolveChosen(candidate);
+    },
+    cancel() {
+      if (attempt.done) return;
+      attempt.done = true;
+      const error = new Error("USER_CANCELLED");
+      rejectCancelled(error);
+      rejectChosen(error);
+    }
+  };
+  return attempt;
+}
+
+// Charge les bibliothèques NIP-46 (le QR code seulement pour Nostr Connect).
+async function prepareNip46(qrCode) {
+  void showMessage({ tone: "busy", title: t("nip46.preparingTitle"), text: t("nip46.preparingText") });
+  try {
+    await loadNip46Libraries({ qrCode });
+    return true;
+  } catch {
+    await showMessage({ tone: "alert", title: t("nip46.libsMissingTitle"), text: t("nip46.libsMissingText"), actions: OK_ACTION });
+    return false;
+  }
+}
+
+// Signer connecté : fermeture de la fenêtre, puis chargement du compte. Renvoie true si la connexion aboutit.
+async function completeNip46Login(dialog, candidate) {
+  if (dialog.open) dialog.close();
+  if (await finishLogin(candidate, await candidate.getPublicKey())) return true;
+  candidate.close();
+  return false;
+}
+
+/* Bunker : adresse bunker://, seuls les relais de cette adresse sont utilisés. */
+async function loginWithBunker() {
+  const button = $("btnLoginBunker");
+  if (button.disabled || nip46Busy) return;
+  nip46Busy = true;
+  button.disabled = true;
+  try {
+    if (!(await prepareNip46(false))) return;
+    hideMessage();
+    const attempt = bunkerAttempt = createAttempt();
+    $("bunkerInput").value = "";
+    $("bunkerConnect").disabled = false;
+    setStatus("bunkerStatus", "");
+    bunkerDialog.showModal();
+    $("bunkerInput").focus();
+    let candidate;
+    try { candidate = await attempt.chosen; }
+    catch { return; } // annulation
+    await completeNip46Login(bunkerDialog, candidate);
+  } finally {
+    bunkerAttempt = null;
+    if (bunkerDialog.open) bunkerDialog.close();
+    nip46Busy = false;
+    button.disabled = false;
+  }
+}
+
+async function connectWithBunker() {
+  const attempt = bunkerAttempt;
+  const button = $("bunkerConnect");
+  if (!attempt || attempt.done || button.disabled) return;
+  button.disabled = true;
+  setStatus("bunkerStatus", t("nip46.status.bunkerConnecting"));
+  try {
+    const candidate = await connectBunker($("bunkerInput").value, { perms: NIP46_CONFIG.perms, onAuthUrl: askAuthUrl }, attempt.cancelled);
+    attempt.resolve(candidate);
+  } catch (error) {
+    if (error?.message === "USER_CANCELLED" || attempt.done) return;
+    setStatus("bunkerStatus", nip46ErrorText(error), true);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+/* Nostr Connect : lien nostrconnect:// en QR code ou à ouvrir directement. */
+async function loginWithNostrConnect() {
+  const button = $("btnLoginNostrConnect");
+  if (button.disabled || nip46Busy) return;
+  nip46Busy = true;
   button.disabled = true;
   let connection = null;
-  let linkWon = false; // true si la connexion s'est faite par le lien nostrconnect://
+  let loggedIn = false;
   try {
-    void showMessage({ tone: "busy", title: t("nip46.preparingTitle"), text: t("nip46.preparingText") });
-    try { await loadNip46Libraries(); }
-    catch {
-      await showMessage({ tone: "alert", title: t("nip46.libsMissingTitle"), text: t("nip46.libsMissingText"), actions: OK_ACTION });
-      return;
-    }
+    if (!(await prepareNip46(true))) return;
     try { connection = await createNostrConnect({ ...NIP46_CONFIG, onAuthUrl: askAuthUrl }); }
     catch {
       await showMessage({ tone: "alert", title: t("nip46.relaysUnreachableTitle"), text: t("nip46.relaysUnreachableText"), actions: OK_ACTION });
@@ -1089,84 +1179,55 @@ async function loginWithNip46() {
     }
     hideMessage();
 
-    // QR code et lien nostrconnect://
     const qr = window.qrcode(0, "L");
     qr.addData(connection.uri);
     qr.make();
-    $("nip46Qr").innerHTML = qr.createSvgTag({ cellSize: 4, margin: 4, scalable: true, title: t("nip46.qrLabel") });
-    $("nip46Open").href = connection.uri;
-    $("nip46Bunker").value = "";
-    $("nip46BunkerConnect").disabled = false;
-    setNip46Status(t("nip46.status.waiting"));
+    $("nostrConnectQr").innerHTML = qr.createSvgTag({ cellSize: 4, margin: 4, scalable: true, title: t("nip46.qrLabel") });
+    $("nostrConnectOpen").href = connection.uri;
+    setCopyState("idle");
+    setStatus("nostrConnectStatus", t("nip46.status.waiting"));
 
-    // Le premier signer connecté (lien ou bunker) l'emporte.
-    let rejectCancelled;
-    const cancelled = new Promise((_, reject) => { rejectCancelled = reject; });
-    cancelled.catch(() => {});
-    const chosen = new Promise((resolve, reject) => {
-      nip46Attempt = {
-        cancelled,
-        resolve: candidate => {
-          if (nip46Attempt?.done) { candidate.close(); return; }
-          nip46Attempt.done = true;
-          resolve(candidate);
-        },
-        cancel: () => { rejectCancelled(new Error("USER_CANCELLED")); reject(new Error("USER_CANCELLED")); }
-      };
-    });
-    nip46Dialog.showModal();
-    $("nip46Open").focus();
-    connection.waitForSigner(cancelled, () => setNip46Status(t("nip46.status.paired")))
-      .then(candidate => {
-        if (nip46Attempt && !nip46Attempt.done) linkWon = true;
-        if (nip46Attempt) nip46Attempt.resolve(candidate); else candidate.close();
-      })
+    const attempt = nostrConnectAttempt = createAttempt();
+    nostrConnectDialog.showModal();
+    $("nostrConnectOpen").focus();
+    connection.waitForSigner(attempt.cancelled, () => setStatus("nostrConnectStatus", t("nip46.status.paired")))
+      .then(candidate => attempt.resolve(candidate))
       .catch(error => {
         const code = error?.message;
-        if (code === "USER_CANCELLED" || code === "NIP46_CLOSED") return;
-        setNip46Status(code === "SIGNER_TIMEOUT" ? t("nip46.status.pairingTimeout") : nip46ErrorText(error), true);
+        if (code === "USER_CANCELLED" || code === "NIP46_CLOSED" || attempt.done) return;
+        setStatus("nostrConnectStatus", code === "SIGNER_TIMEOUT" ? t("nip46.status.pairingTimeout") : nip46ErrorText(error), true);
       });
 
     let candidate;
-    try { candidate = await chosen; }
+    try { candidate = await attempt.chosen; }
     catch { return; } // annulation
-    nip46Attempt = null;
-    if (nip46Dialog.open) nip46Dialog.close();
-    if (!(await finishLogin(candidate, await candidate.getPublicKey()))) candidate.close();
+    loggedIn = await completeNip46Login(nostrConnectDialog, candidate);
   } finally {
-    nip46Attempt = null;
-    if (nip46Dialog.open) nip46Dialog.close();
-    // Le lien nostrconnect:// non utilisé est fermé ; une session gagnante reste ouverte via le signer.
-    if (connection && !(linkWon && signer)) connection.close();
-    $("nip46Qr").replaceChildren();
+    nostrConnectAttempt = null;
+    if (nostrConnectDialog.open) nostrConnectDialog.close();
+    // Une session gagnante reste ouverte via le signer ; sinon le lien est fermé.
+    if (connection && !loggedIn) connection.close();
+    $("nostrConnectQr").replaceChildren();
+    setCopyState("idle");
+    nip46Busy = false;
     button.disabled = false;
   }
 }
 
-async function connectWithBunker() {
-  const attempt = nip46Attempt;
-  const button = $("nip46BunkerConnect");
-  if (!attempt || button.disabled) return;
-  button.disabled = true;
-  setNip46Status(t("nip46.status.bunkerConnecting"));
-  try {
-    const candidate = await connectBunker($("nip46Bunker").value, { perms: NIP46_CONFIG.perms, onAuthUrl: askAuthUrl }, attempt.cancelled);
-    if (nip46Attempt === attempt) attempt.resolve(candidate);
-    else candidate.close();
-  } catch (error) {
-    if (error?.message === "USER_CANCELLED") return;
-    if (nip46Attempt === attempt) setNip46Status(nip46ErrorText(error), true);
-  } finally {
-    button.disabled = false;
-  }
+// Bouton de copie : « ✓ Lien copié » ou « Copie impossible » pendant 2 secondes (largeur fixe, voir CSS).
+function setCopyState(state) {
+  const button = $("nostrConnectCopy");
+  clearTimeout(copyResetTimer);
+  button.dataset.state = state;
+  if (state !== "idle") copyResetTimer = setTimeout(() => { button.dataset.state = "idle"; }, 2000);
 }
 
-async function copyNip46Link() {
+async function copyNostrConnectLink() {
   try {
-    await navigator.clipboard.writeText($("nip46Open").href);
-    setNip46Status(t("nip46.status.copied"));
+    await navigator.clipboard.writeText($("nostrConnectOpen").href);
+    setCopyState("done");
   } catch {
-    setNip46Status(t("nip46.status.copyFailed"), true);
+    setCopyState("error");
   }
 }
 
@@ -1436,12 +1497,17 @@ $("relayModeAdd").addEventListener("click", () => {
 });
 $("relayModeDialog").addEventListener("close", () => { pendingRelay = null; });
 $("btnLogin").addEventListener("click", login);
-$("btnLoginNip46").addEventListener("click", loginWithNip46);
-$("nip46BunkerConnect").addEventListener("click", connectWithBunker);
-$("nip46Bunker").addEventListener("keydown", e => { if (e.key === "Enter") connectWithBunker(); });
-$("nip46Copy").addEventListener("click", copyNip46Link);
-$("nip46Cancel").addEventListener("click", () => nip46Attempt?.cancel());
-nip46Dialog.addEventListener("cancel", event => { event.preventDefault(); nip46Attempt?.cancel(); });
+$("btnLoginBunker").addEventListener("click", loginWithBunker);
+$("btnLoginNostrConnect").addEventListener("click", loginWithNostrConnect);
+$("bunkerConnect").addEventListener("click", connectWithBunker);
+$("bunkerInput").addEventListener("keydown", e => { if (e.key === "Enter") connectWithBunker(); });
+$("bunkerCancel").addEventListener("click", () => bunkerAttempt?.cancel());
+bunkerDialog.addEventListener("cancel", event => { event.preventDefault(); bunkerAttempt?.cancel(); });
+$("nostrConnectCopy").addEventListener("click", copyNostrConnectLink);
+$("nostrConnectCancel").addEventListener("click", () => nostrConnectAttempt?.cancel());
+nostrConnectDialog.addEventListener("cancel", event => { event.preventDefault(); nostrConnectAttempt?.cancel(); });
+// Safari iOS n'applique l'état :active (effet d'appui des boutons) que si la page écoute les touchers.
+document.addEventListener("touchstart", () => {}, { passive: true });
 $("btnLogout").addEventListener("click", logout);
 $("btnAdd").addEventListener("click", () => addRelay($("newUrl").value));
 $("newUrl").addEventListener("keydown", e => {
