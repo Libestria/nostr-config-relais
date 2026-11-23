@@ -8,11 +8,13 @@
    Les deux renvoient un signer qui respecte l'interface décrite dans common.js.
 
    Bibliothèques (chargées seulement quand NIP-46 est choisi) :
-   vendor/nostr-tools/nostr.bundle.js (window.NostrTools) et vendor/qrcode-generator/qrcode.js (window.qrcode). */
+   vendor/nostr-tools/nostr.bundle.js (window.NostrTools), et pour Nostr Connect seulement
+   vendor/qrcode-generator/qrcode.js (window.qrcode). */
 
 import { withTimeout, signerError } from "./common.js";
 
-const LIBRARIES = ["vendor/nostr-tools/nostr.bundle.js", "vendor/qrcode-generator/qrcode.js"];
+const NOSTR_TOOLS = "vendor/nostr-tools/nostr.bundle.js";
+const QR_CODE = "vendor/qrcode-generator/qrcode.js";
 const KIND = 24133;
 export const NIP46_TIMEOUT = Object.freeze({
   relayConnect: 6000,   // ouverture d'un relais de communication
@@ -37,9 +39,10 @@ function loadScript(src) {
   return scriptLoads.get(src);
 }
 
-export async function loadNip46Libraries() {
-  await Promise.all(LIBRARIES.map(loadScript));
-  if (!window.NostrTools?.nip44 || typeof window.qrcode !== "function") throw new Error("NIP46_LIBS_MISSING");
+// qrCode : false pour Bunker (le QR code ne sert qu'à Nostr Connect).
+export async function loadNip46Libraries({ qrCode = true } = {}) {
+  await Promise.all([loadScript(NOSTR_TOOLS), ...(qrCode ? [loadScript(QR_CODE)] : [])]);
+  if (!window.NostrTools?.nip44 || (qrCode && typeof window.qrcode !== "function")) throw new Error("NIP46_LIBS_MISSING");
 }
 
 const tools = () => window.NostrTools;
