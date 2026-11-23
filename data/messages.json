@@ -20,7 +20,8 @@
       "missing": "Aucun signer NIP-07 détecté.\nInstalle ou active une extension compatible, puis recommence.",
       "denied": "Connexion refusée.\nAutorise l’accès à ta clé publique dans ton signer, puis réessaie.",
       "technical": "Impossible de communiquer avec ton signer.\nVérifie qu’il fonctionne, puis réessaie.",
-      "timeout": "Ton signer ne répond pas.\nVérifie ton extension, puis réessaie."
+      "timeout": "Ton signer ne répond pas.\nVérifie ton extension, puis réessaie.",
+      "signerMessage": "Message renvoyé par ton signer :\n« {message} »"
     }
   },
   "loading": {
@@ -201,7 +202,10 @@
       "missingTitle": "Signature non obtenue",
       "missingText": "Le signer n’a renvoyé aucune signature. La demande a peut-être été refusée ou interrompue.\nAucune publication n’a été effectuée.\nVérifie ton signer, puis réessaie.",
       "lockedTitle": "Signer verrouillé",
-      "lockedText": "Ton signer est verrouillé.\nDéverrouille-le, puis réessaie.\nAucune publication n’a été effectuée."
+      "lockedText": "Ton signer est verrouillé.\nDéverrouille-le, puis réessaie.\nAucune publication n’a été effectuée.",
+      "signerTitle": "Signature non obtenue",
+      "signerText": "Ton signer n’a pas signé la liste. Aucune publication n’a été effectuée.\nSi le problème persiste, déconnecte-toi, puis reconnecte ton signer.",
+      "signerMessageHeading": "Message renvoyé par ton signer :"
     }
   },
   "logout": {
@@ -228,7 +232,8 @@
       "failed": "Connexion impossible : {reason}",
       "relaysUnreachable": "Impossible de joindre les relais indiqués dans cette adresse bunker.",
       "copied": "Lien copié.",
-      "copyFailed": "Copie impossible : sélectionne le lien et copie-le manuellement."
+      "copyFailed": "Copie impossible : sélectionne le lien et copie-le manuellement.",
+      "signerMessage": "Message renvoyé par ton signer :\n« {message} »"
     },
     "authTitle": "Validation demandée par ton signer",
     "authText": "Ton signer demande une confirmation sur sa propre page.\nOuvre-la, valide la demande, puis reviens ici.",
