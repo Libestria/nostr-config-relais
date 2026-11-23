@@ -422,13 +422,15 @@ body:not(.keyboard-navigation) .app-dialog button:focus-visible { outline: none;
 .help .login-modes { margin: 0 0 8px; padding-left: 22px; }
 .help .login-modes li + li { margin-top: 6px; }
 .help .login-modes li::marker { color: var(--violet-light); }
-.login-choices { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
-@media (max-width: 480px) { .login-choices .btn-connect { flex: 1 1 100%; } }
+/* Trois boutons sur une ligne quand la carte est assez large, sinon empilés sur toute la largeur. */
+#login { container-type: inline-size; }
+.login-choices { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; }
+.login-choices .btn-connect { padding-inline: 12px; }
+@container (min-width: 600px) { .login-choices { grid-template-columns: repeat(3, auto); justify-content: start; gap: 8px; } }
 
 .nip46-dialog { width: min(520px, calc(100% - 32px)); overflow-y: auto; overscroll-behavior: contain; }
-.nip46-option { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--btn-border); }
-.nip46-option h3 { margin: 0 0 8px; color: #fff; font-size: 1rem; font-weight: 600; }
-.app-dialog p.nip46-help { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+.app-dialog p.nip46-help { margin: 0 0 14px; color: var(--muted); font-size: .9rem; }
+
 .nip46-qr { width: min(240px, 100%); margin: 0 auto 12px; padding: 8px; border-radius: 8px; background: #fff; }
 .nip46-qr:empty { display: none; }
 .nip46-qr svg { display: block; width: 100%; height: auto; }
@@ -441,9 +443,27 @@ body:not(.keyboard-navigation) .app-dialog button:focus-visible { outline: none;
 @media (hover: hover) { .nip46-open:hover { background: #6D28D9; border-color: #6D28D9; } }
 .nip46-open[aria-disabled="true"] { opacity: .5; pointer-events: none; }
 .nip46-bunker-row input { flex: 1 1 auto; }
-#nip46BunkerConnect { background: #7C3AED; border-color: #7C3AED; color: #fff; }
-@media (hover: hover) { #nip46BunkerConnect:not(:disabled):hover { background: #6D28D9; border-color: #6D28D9; } }
+#bunkerConnect { background: #7C3AED; border-color: #7C3AED; color: #fff; }
+@media (hover: hover) { #bunkerConnect:not(:disabled):hover { background: #6D28D9; border-color: #6D28D9; } }
 @media (max-width: 480px) { .nip46-bunker-row { flex-wrap: wrap; } .nip46-bunker-row button { flex: 1 1 100%; } }
 .app-dialog p.nip46-status { margin: 16px 0 0; color: var(--cyan); font-size: .95rem; white-space: pre-line; }
 .app-dialog p.nip46-status:empty { display: none; }
 .app-dialog p.nip46-status.is-error { color: var(--bad-text); }
+
+/* 18. Effet d'appui et bouton de copie --------------------------------- */
+/* Appui : couleur et ombre intérieure, sans changer la taille ni la position des boutons. */
+button, .nip46-open { transition: background .2s, border-color .2s, color .2s, box-shadow .12s, filter .12s; }
+button:not(:disabled):active, .nip46-open:active {
+  background: var(--btn-hover-bg); border-color: var(--btn-hover-border); color: #fff;
+  box-shadow: inset 0 2px 8px rgb(0 0 0 / 55%);
+  filter: brightness(1.12);
+}
+
+/* Copie : les trois libellés occupent la même case, la largeur est celle du plus long. */
+.copy-btn { display: inline-grid; place-items: center; }
+.copy-label { grid-area: 1 / 1; visibility: hidden; white-space: nowrap; }
+.copy-btn[data-state="idle"] .copy-label[data-for="idle"],
+.copy-btn[data-state="done"] .copy-label[data-for="done"],
+.copy-btn[data-state="error"] .copy-label[data-for="error"] { visibility: visible; }
+button.copy-btn[data-state="done"] { background: var(--ok); border-color: var(--ok); color: var(--okink); }
+button.copy-btn[data-state="error"] { background: var(--bad); border-color: var(--bad); color: #fff; }
