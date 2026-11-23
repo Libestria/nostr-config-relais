@@ -980,7 +980,8 @@ function showLoginError(message) {
 
 function loginError(error) {
   if (error?.message === "SIGNER_TIMEOUT") return t("login.errors.timeout");
-  return t(isRefusal(error) ? "login.errors.denied" : "login.errors.technical");
+  const text = t(isRefusal(error) ? "login.errors.denied" : "login.errors.technical");
+  return error?.fromSigner && error.message ? text + "\n" + t("login.errors.signerMessage", { message: error.message }) : text;
 }
 
 // Garantit un temps de lecture minimal pour chaque fenêtre de progression automatique.
@@ -1051,6 +1052,10 @@ function nip46ErrorText(error) {
   if (code === "NIP46_INVALID_BUNKER") return t("nip46.status.invalidBunker");
   if (code === "NIP46_RELAYS_UNREACHABLE") return t("nip46.status.relaysUnreachable");
   if (code === "SIGNER_TIMEOUT") return t("nip46.status.timeout");
+  if (error?.fromSigner) {
+    const signerText = t("nip46.status.signerMessage", { message: code || "?" });
+    return isRefusal(error) ? t("nip46.status.refused") + "\n" + signerText : signerText;
+  }
   if (isRefusal(error)) return t("nip46.status.refused");
   return t("nip46.status.failed", { reason: code || "?" });
 }
@@ -1375,7 +1380,7 @@ async function publishOnce(key, signedEvent = null) {
       } else if (isRefusal(error)) {
         alertTitle = t("publish.errors.refusedTitle");
         alertText = t("publish.errors.refusedText");
-      } else if (msg === "SIGNER_TIMEOUT" || msg === "SIGNER_UNAVAILABLE") {
+      } else if (msg === "SIGNER_TIMEOUT" || msg === "SIGNER_UNAVAILABLE" || msg === "NIP46_CLOSED" || msg === "NIP46_RELAYS_UNREACHABLE") {
         alertTitle = t("publish.errors.unavailableTitle");
         alertText = t("publish.errors.unavailableText");
       } else if (msg === "SIGNATURE_MISSING") {
@@ -1384,9 +1389,16 @@ async function publishOnce(key, signedEvent = null) {
       } else if (/lock|verrouill/i.test(msg)) {
         alertTitle = t("publish.errors.lockedTitle");
         alertText = t("publish.errors.lockedText");
+      } else if (error?.fromSigner) {
+        alertTitle = t("publish.errors.signerTitle");
+        alertText = t("publish.errors.signerText");
       }
     }
-    await showMessage({ tone: "alert", title: alertTitle, text: alertText, actions: OK_ACTION });
+    // Message d'origine du signer, affiché séparément et tel quel.
+    const details = awaitingSignature && error?.fromSigner && msg
+      ? [{ heading: true, text: t("publish.errors.signerMessageHeading") }, { plain: true, text: msg }]
+      : undefined;
+    await showMessage({ tone: "alert", title: alertTitle, text: alertText, details, actions: OK_ACTION });
     return null;
   } finally {
     publishing = false;
